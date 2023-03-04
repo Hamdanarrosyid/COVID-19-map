@@ -6,7 +6,7 @@ import Mapbox from './components/Mapbox';
 
 function App() {
   const [loading, setLoading] = useState(true)
-  const [data, setdata] = useState([])
+  const [data, setdata] = useState(null)
 
   const fetchAllData = async () => {
     try {
@@ -14,6 +14,7 @@ function App() {
       setdata(allCases)
       setLoading(false)
     } catch (error) {
+      setLoading(false)
       console.log(error)
     }
   }

@@ -24,6 +24,12 @@ const Mapbox = ({ allCoordinates }) => {
 
 
     useEffect(() => {
+        var total_cases = 0
+        var deaths = 0
+        var recovered = 0
+        var newCoordinates = []
+
+
         if (map.current) return; // initialize map only once
 
         map.current = new mapboxgl.Map({
@@ -32,19 +38,23 @@ const Mapbox = ({ allCoordinates }) => {
             center: [lng, lat],
             zoom: zoom,
             attributionControl: false,
-            doubleClickZoom:false
+            doubleClickZoom: false
             // renderWorldCopies: false
         });
 
         const popup = new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false,
-
         })
 
         const mapOverlayContent = document.querySelector('.map-overlay-content')
 
-        const { total_cases, deaths, recovered } = allCoordinates.summary
+        if (allCoordinates != null) {
+            total_cases = allCoordinates.summary.total_cases
+            deaths = allCoordinates.summary.deaths
+            recovered = allCoordinates.summary.recovered
+            newCoordinates = Object.values(allCoordinates.regions)
+        }
 
         mapOverlayContent.innerHTML = `
         <h1>${numeral(total_cases).format('0,0')}</h1>
@@ -64,7 +74,6 @@ const Mapbox = ({ allCoordinates }) => {
 
             const matchExpression = ['match', ['get', 'iso_3166_1']]
 
-            const newCoordinates = Object.values(allCoordinates.regions)
             newCoordinates.push({ name: 'China', iso3166a2: 'CN', total_cases: 93701, recovered: 87558, deaths: 4636 })
 
             newCoordinates.map((value) => {
@@ -186,7 +195,7 @@ const Mapbox = ({ allCoordinates }) => {
 
         map.current.touchZoomRotate.disableRotation()
 
-    }, [allCoordinates.regions, allCoordinates.summary, lat, lng, zoom]);
+    }, [lat, lng, zoom,allCoordinates]);
 
     return (
         <div>
